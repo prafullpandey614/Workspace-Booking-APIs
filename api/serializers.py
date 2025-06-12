@@ -1,4 +1,5 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from .models import Booking, Room, Team, TeamMember
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
@@ -18,10 +19,10 @@ class BookingCreateSerializer(ModelSerializer):
         model = Booking
         fields = ["user","team","checkin_time", "checkout_time"]
 
-class RoomAvailabilitySerializer(ModelSerializer):
-    class Meta:
-        model = Room
-        fields = "__all__"
+class RoomAvailabilitySerializer(serializers.Serializer):
+    checkin_time = serializers.DateTimeField()
+    checkout_time = serializers.DateTimeField()
+    room_type = serializers.ChoiceField(choices=Room.ROOM_TYPES)
 
 class UserSerializer(ModelSerializer):
     class Meta:
