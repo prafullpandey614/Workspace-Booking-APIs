@@ -8,8 +8,9 @@ from django.utils.timezone import make_aware
 from datetime import datetime, time
 from django.shortcuts import get_object_or_404
 from .models import Room, Booking, UserProfile, Team, TeamMember
-from .serializers import BookingSerializer, BookingCreateSerializer, RoomAvailabilitySerializer, UserSerializer, TeamMemberSerializer, TeamSerializer, RoomSerializer
+from .serializers import BookingSerializer, BookingCreateSerializer, RoomAvailabilitySerializer, UserSerializer, TeamMemberSerializer, TeamSerializer, RoomSerializer, AvailableSlotsSerializer
 from django.db.models import Q
+from rest_framework.pagination import PageNumberPagination
 
 class UserRegistration(APIView):
 
@@ -54,7 +55,12 @@ class BookingView(APIView):
     def get(self, request):
         bookings = Booking.objects.select_related('room', 'user', 'team').all()
         serializer = BookingSerializer(bookings, many=True)
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        paginated_rooms = paginator.paginate_queryset(bookings, request)
+
+        serialized_rooms = BookingSerializer(paginated_rooms, many=True)
+        return paginator.get_paginated_response(serialized_rooms.data)
+
 
     @transaction.atomic
     def post(self, request):
@@ -137,10 +143,12 @@ class AvailableRoomsView(APIView):
 
     def get(self, request):
         
-        checkin = request.query_params['checkin_time']
-        checkout = request.query_params['checkout_time']
-        room_type = request.query_params['room_type']
+        serializer = RoomAvailabilitySerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
 
+        checkin = serializer.validated_data['checkin_time']
+        checkout = serializer.validated_data['checkout_time']
+        room_type = serializer.validated_data['room_type']
         available_rooms = []
 
         if room_type in ['PRIVATE', 'CONFERENCE']:
@@ -171,5 +179,8 @@ class AvailableRoomsView(APIView):
                         "room_id": room.id,
                         "available_desks": room.capacity - overlapping_count
                     })
+        paginator = PageNumberPagination()
+        paginated_rooms = paginator.paginate_queryset(available_rooms, request)
 
-        return Response({"available_room_ids": available_rooms})
+        serialized_rooms = AvailableSlotsSerializer(paginated_rooms, many=True)
+        return paginator.get_paginated_response(serialized_rooms.data)

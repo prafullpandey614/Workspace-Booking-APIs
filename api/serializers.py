@@ -52,3 +52,7 @@ class TeamMemberSerializer(ModelSerializer):
     class Meta:
         model = TeamMember
         fields = ['id', 'user', 'team']
+
+class AvailableSlotsSerializer(serializers.Serializer):
+    room_id = serializers.IntegerField()
+    available_desks = serializers.IntegerField()
