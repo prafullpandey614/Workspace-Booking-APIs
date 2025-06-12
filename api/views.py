@@ -132,26 +132,44 @@ class CancelBooking(APIView):
 
 class AvailableRoomsView(APIView):
     """
-    GET: View available rooms for a specific slot and type.
+    GET: View available rooms for a specific slot (check-in and check-out) and room type.
     """
 
     def get(self, request):
-        serializer = RoomAvailabilitySerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        slot = serializer.validated_data['slot']
-        room_type = serializer.validated_data['room_type']
+        
+        checkin = request.query_params['checkin_time']
+        checkout = request.query_params['checkout_time']
+        room_type = request.query_params['room_type']
 
         available_rooms = []
+
         if room_type in ['PRIVATE', 'CONFERENCE']:
             rooms = Room.objects.filter(room_type=room_type)
             for room in rooms:
-                if not Booking.objects.filter(room=room, slot=slot).exists():
-                    available_rooms.append(room.id)
+                # Check if room is free in given time range
+                overlapping_bookings = Booking.objects.filter(
+                    room=room,
+                    checkin_time__lt=checkout,
+                    checkout_time__gt=checkin
+                )
+                if not overlapping_bookings.exists():
+                    available_rooms.append({
+                        "room_id": room.id,
+                        "available_desks": room.capacity - overlapping_count
+                    })
+
         elif room_type == 'SHARED_DESK':
             rooms = Room.objects.filter(room_type='SHARED_DESK')
             for room in rooms:
-                count = Booking.objects.filter(room=room, slot=slot).count()
-                if count < room.capacity:
-                    available_rooms.append(room.id)
+                overlapping_count = Booking.objects.filter(
+                    room=room,
+                    checkin_time__lt=checkout,
+                    checkout_time__gt=checkin
+                ).count()
+                if overlapping_count < room.capacity:
+                    available_rooms.append({
+                        "room_id": room.id,
+                        "available_desks": room.capacity - overlapping_count
+                    })
 
         return Response({"available_room_ids": available_rooms})
