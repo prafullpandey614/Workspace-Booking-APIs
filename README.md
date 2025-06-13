@@ -45,6 +45,7 @@ This will:
 | POST   | `/bookings/api/v1/rooms/available/`       | Check room availability per slot     |
 
 
-
+Full API Docs in Postman :
+ [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/39923631-9d96fd55-c133-4ac2-bf49-f4c5aadf3afe?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D39923631-9d96fd55-c133-4ac2-bf49-f4c5aadf3afe%26entityType%3Dcollection%26workspaceId%3D4cc2e364-8fbd-4245-a5a7-2685d793a1c5)
 
 ---
