@@ -10,25 +10,7 @@ A backend service to manage booking of virtual workspace rooms (Private Rooms, S
 - [uv](https://github.com/astral-sh/uv) for dependency management
 - Docker & Docker Compose
 
----
 
-## 📁 Project Structure
-
-```
-.
-├── app/
-│   ├── bookings/             # Django app for room booking
-│   ├── manage.py
-│   ├── db.sqlite3            # SQLite DB (local only)
-│   └── ...
-├── Dockerfile
-├── docker-compose.yml
-├── pyproject.toml
-├── uv.lock
-└── README.md
-```
-
----
 
 ## 🚀 Getting Started
 
@@ -47,10 +29,13 @@ This will:
 
 ---
 
-## 🔧 API Endpoints
+## 🔧 API Endpoints  
 
 | Method | Endpoint                            | Description                  |
 |--------|-------------------------------------|------------------------------|
+| POST    | `/bookings/api/v1/register/`           | Users can register themselves  |
+| GET    | `/bookings/api/token/`           | Get Access Token  |
+| GET    | `/bookingsapi/token/refresh/`           | Refresh JWT Token  |
 | GET    | `/bookings/api/v1/rooms/`           | List all available rooms     |
 | POST   | `/bookings/api/v1/create-team/`     | Create a team                |
 | POST   | `/bookings/api/v1/create-room/`     | Add a room     |
