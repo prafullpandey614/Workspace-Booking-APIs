@@ -169,7 +169,7 @@ class AvailableRoomsView(APIView):
                 if not overlapping_bookings.exists():
                     available_rooms.append({
                         "room_id": room.id,
-                        "available_desks": room.capacity - overlapping_count
+                        "available_desks": room.capacity
                     })
 
         elif room_type == 'SHARED_DESK':
