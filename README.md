@@ -33,9 +33,10 @@ This will:
 
 | Method | Endpoint                            | Description                  |
 |--------|-------------------------------------|------------------------------|
+| POST    | `/admin`           | Admin panel UI  |
 | POST    | `/bookings/api/v1/register/`           | Users can register themselves  |
-| GET    | `/bookings/api/token/`           | Get Access Token  |
-| GET    | `/bookingsapi/token/refresh/`           | Refresh JWT Token  |
+| POST    | `/bookings/api/token/`           | Get Access Token  |
+| POST    | `/bookingsapi/token/refresh/`           | Refresh JWT Token  |
 | GET    | `/bookings/api/v1/rooms/`           | List all available rooms     |
 | POST   | `/bookings/api/v1/create-team/`     | Create a team                |
 | POST   | `/bookings/api/v1/create-room/`     | Add a room     |
