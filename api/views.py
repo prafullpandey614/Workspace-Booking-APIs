@@ -11,6 +11,7 @@ from .models import Room, Booking, UserProfile, Team, TeamMember
 from .serializers import BookingSerializer, BookingCreateSerializer, RoomAvailabilitySerializer, UserSerializer, TeamMemberSerializer, TeamSerializer, RoomSerializer, AvailableSlotsSerializer
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 class UserRegistration(APIView):
 
@@ -36,21 +37,24 @@ class UserRegistration(APIView):
 class CreateTeamAPIView(ListCreateAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
 
 class TeamMembershipAPIView(ListCreateAPIView):
     queryset = TeamMember.objects.all()
     serializer_class = TeamMemberSerializer
-
+    permission_classes = [IsAuthenticated]
 
 class CreateRoomAPIView(ListCreateAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+    permission_classes = [IsAdminUser]
 
 class BookingView(APIView):
     """
     POST: Book a room.
     GET: View all bookings.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         bookings = Booking.objects.select_related('room', 'user', 'team').all()
@@ -126,6 +130,7 @@ class CancelBooking(APIView):
     """
     POST: Cancel a booking by ID.
     """
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, booking_id):
         try:
@@ -140,6 +145,7 @@ class AvailableRoomsView(APIView):
     """
     GET: View available rooms for a specific slot (check-in and check-out) and room type.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         
